@@ -1,0 +1,51 @@
+Perform Nagios Server
+
+
+nstall NCPA in Windows
+Generate a token
+port 5693
+download ncpa.py in /usr/local/nagios/libexec/
+EDIT FIRST LINE OF check_ncpa.py:
+                                #!/usr/bin/env python3
+cd /usr/local/nagios/libexec/
+sudo ./check_ncpa.py -t 'mysecret' -H <client-ip> -M memory/virtual
+sudo nano /usr/local/nagios/etc/objects/commands.cfg
+```
+define command	{
+        command_name	check_ncpa
+        command_line	$USER1$/check_ncpa.py -H $HOSTAGDDRESS$ $ARG1$
+}
+```
+
+sudo nano /usr/local/nagios/etc/nagios.cfg
+UNCOMMENT cfg_dir=/usr/local/nagios/etc/servers
+sudo mkdir -p /usr/local/nagios/etc/servers
+sduo nano /usr/local/nagios/etc/servers/win10-1.cfg
+```
+define host	{
+        use				windows-server
+        host_name			win10-1
+        alias				Windows 10 Sys 1
+        address				<Windows ip>
+        max_check_attempts		5
+}
+
+define service	{
+        use			generic-service
+        host_name		win10-1
+        service_description	NCPA version check
+        check_command		check_ncpa!-t 'token' -p -P 5693 -M system/agent_version
+}
+
+define service	{
+        use			generic-service
+        host_name		win10-1
+        service_description	CPU average
+        check_command		check_ncpa!-t 'token' -p -P 5693 -M cpu/percent -w 20 -c 40 -q 'aggregate=avg'
+}
+```
+
+comment the windows-servers line in ***templates.cfg*** in etc folder
+
+sudo systemctl restart nagios
+sudo systemctl restart apache2
