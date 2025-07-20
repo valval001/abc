@@ -1,0 +1,75 @@
+Intrusion Detection System (IDS)
+
+- Exclude the folder from defender
+    
+- Install Snort
+    
+    - Snort is a CLI tool so it should be run in command promt as an ADMINISTRATOR
+- Install Winpcap
+    
+- Snort can be run in 2 modes:-
+    
+    - Packet Capture mode
+    - IDS mode
+- getmac /fo csv /v ----> To get info about the adapters
+    
+- Copy rule file to the C:/Snort/
+    
+
+## Commands to start snort in IDS mode
+
+1.  snort -i 1 -c c:\snort\etc\snort.conf - l c:\snort\log -A console
+    
+    Error A :- Unknown rule type ipvar  
+    Fix A :- Open snort.conf file in notepad and replace all occurence of ipvar to var
+    
+    &nbsp;
+    
+    Error B :- snort_dynamicproccessor  
+    Fix B :- Open snort.conf file in notepad, search for the snort_dynamicproccessor and change the location of the files (14 files -- 14 paths to different file) c:\snort\lib*
+    
+    &nbsp;
+    
+    Error C :- snort_dynamicengine  
+    Fix C :- Same fix as the B
+    
+    &nbsp;
+    
+    Error D :- snort_dynamicdetection  
+    Fix D :- Same fix as B, create an empty directory in snort lib folder
+    
+    &nbsp;
+    
+    Error E :- normalize_ip4  
+    Fix E :- Go to snort_conf, search for rhe keyword and comment the 5 lines
+    
+    &nbsp;
+    
+    Error F :- white_list.rules  
+    Fix F :- Create a white_list.rule file in the snort rules folder
+    
+    &nbsp;
+    
+    Error G :- black_list.rules  
+    Fix:- Create a black_list.rule
+    
+
+CHANGES in conf File
+
+var RULE_PATH ../ruled  
+var SO_RULES ../rules  
+var PREPROC_RULE_PATH ..\rules
+
+Change .. with snort adsolute path
+
+var WHITE_LIST_PATH ../rules  
+vsr BLACK_LIST_PATH ../rules
+
+whitelist $WHITE_LIST_PATH /white_list.rules,  
+whitelidt $BLACK_LIST_PATH /black_list.rules
+
+include $RULE_PATH/black_list.rules
+
+## Snort rules
+
+alert <protocol>any any --> any any (msg: "your message";sid: 1000001;)</protocol>
