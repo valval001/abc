@@ -1,0 +1,29 @@
+Install squid
+sudo nano /etc/squid.conf
+
+search for *acl localnet src* and add the line below:
+```
+acl my_site_acl dst <squid server ip / own ip>
+```
+
+search for TAG: http_access, then add the line after the deny lines:
+```
+http_access allow my_site_acl
+```
+
+search for TAG: https_port, and add the line above:
+```
+http_port 3128 accel vhost defaultsite=<apacheserver ip>
+```
+
+search for TAG: cache_peer_access, and the line above:
+```
+cache_peer <apacheIP> parent 80 0 no-query originserver name=myserver
+```
+
+search for TAG: neighbor_type_domain, then add the line above:
+```
+cache_peer_access myserver allow my_site_acl
+cache_peer_access myserver deny all
+```
+
